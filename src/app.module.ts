@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
 import { BlogCategoryModule } from './blog-category/blog-category.module';
+import { TimeMiddleware } from './shared/middlewares/time.middleware';
 
 @Module({
   imports: [
@@ -19,4 +20,8 @@ import { BlogCategoryModule } from './blog-category/blog-category.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TimeMiddleware).forRoutes(`*`);
+  }
+}
