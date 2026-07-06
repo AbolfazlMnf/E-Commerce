@@ -3,6 +3,10 @@ import { BlogController } from './controllers/blog.controller';
 import { BlogService } from './services/blog.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './Schema/blog.schema';
+import {
+  BlogCategory,
+  BlogCategorySchema,
+} from 'src/blog-category/Schema/blogCategory.Schema';
 
 @Module({
   imports: [
@@ -10,6 +14,10 @@ import { Blog, BlogSchema } from './Schema/blog.schema';
       {
         name: Blog.name,
         schema: BlogSchema,
+      },
+      {
+        name: BlogCategory.name,
+        schema: BlogCategorySchema,
       },
     ]),
   ],

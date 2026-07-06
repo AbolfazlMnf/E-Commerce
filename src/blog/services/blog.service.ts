@@ -7,11 +7,14 @@ import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
+import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
 
 @Injectable()
 export class BlogService {
   constructor(
     @InjectModel(Blog.name) private readonly blogModel: Model<Blog>,
+    @InjectModel(BlogCategory.name)
+    private readonly categoryModel: Model<BlogCategory>,
   ) {}
   async findAll(queries: GeneralQueryDto) {
     const { page = 1, limit = 5, order = Order.Desc, title, sort } = queries;
@@ -24,6 +27,7 @@ export class BlogService {
         .sort(sortOption)
         .skip((page - 1) * limit)
         .limit(limit)
+        .populate(`category`)
         .exec(),
       this.blogModel.countDocuments(filter).exec(),
     ]);
@@ -37,6 +41,10 @@ export class BlogService {
     return { blog };
   }
   async create(body: BlogDto) {
+    const category = await this.categoryModel.findById(body.category).exec();
+    if (!category) {
+      throw new NotFoundException(`category Not found `);
+    }
     const newBlog = new this.blogModel(body);
     await newBlog.save();
     return {

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
+import { BlogCategoryModule } from './blog-category/blog-category.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { BlogModule } from './blog/blog.module';
       envFilePath: `.env`,
     }),
     MongooseModule.forRoot(process.env.DB_URL ?? ``),
+    BlogCategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
