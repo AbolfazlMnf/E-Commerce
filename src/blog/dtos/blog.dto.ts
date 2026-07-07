@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
 
 export class BlogDto {
   @IsString()

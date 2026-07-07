@@ -15,6 +15,9 @@ export class Blog extends Document {
     required: true,
   })
   category!: BlogCategory;
+
+  @Prop({ required: false })
+  images?: string[];
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

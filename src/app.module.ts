@@ -6,10 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
 import { BlogCategoryModule } from './blog-category/blog-category.module';
 import { TimeMiddleware } from './shared/middlewares/time.middleware';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { LogInterceptor } from './shared/interceptors/log.interceptor';
 import { Log, LogSchema } from './shared/schemas/log.schema';
 import { LogFilter } from './shared/filters/log.filter';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { IdPipe } from './shared/pipes/id.pipe';
 
 @Module({
   imports: [
@@ -26,6 +29,10 @@ import { LogFilter } from './shared/filters/log.filter';
         schema: LogSchema,
       },
     ]),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, `..`, `files`),
+      serveRoot: `/files`,
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -37,6 +44,10 @@ import { LogFilter } from './shared/filters/log.filter';
     {
       provide: APP_FILTER,
       useClass: LogFilter,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: IdPipe,
     },
   ],
 })

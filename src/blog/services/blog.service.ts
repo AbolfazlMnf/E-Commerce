@@ -8,6 +8,8 @@ import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
+import { deleteImages, saveImages } from 'src/shared/utils/image';
+import { DeleteFileDto } from 'src/shared/dtos/file.dto';
 
 @Injectable()
 export class BlogService {
@@ -38,7 +40,7 @@ export class BlogService {
     if (!blog) {
       throw new NotFoundException(`blog NotFound`);
     }
-    return { blog };
+    return blog;
   }
   async create(body: BlogDto) {
     const category = await this.categoryModel.findById(body.category).exec();
@@ -64,10 +66,48 @@ export class BlogService {
     return updatedBlog;
   }
   async delete(id: string) {
-    const deletedBlog = await this.blogModel.findByIdAndDelete(id);
+    const deletedBlog = await this.blogModel.findByIdAndDelete(id).exec();
     if (!deletedBlog) {
       throw new NotFoundException();
     }
+    if (deletedBlog.images && deletedBlog.images?.length > 0) {
+      await deleteImages(deletedBlog.images);
+    }
     return { message: `Blog deleted` };
+  }
+
+  async uploadImages(id: string, files: Array<Express.Multer.File>) {
+    const blog = await this.blogModel.findById(id);
+    if (!blog) {
+      throw new NotFoundException();
+    }
+    const imagesUrl = await saveImages(files, 'blog', 400, 500);
+    blog.images = imagesUrl;
+    await blog?.save();
+    return {
+      message: `${imagesUrl.length > 1 ? `images` : `image`} added successfully`,
+    };
+  }
+  async deleteImage(id: string, body: DeleteFileDto) {
+    const blog = await this.blogModel.findById(id);
+    if (!blog) {
+      throw new NotFoundException(`Blog not found !`);
+    }
+
+    if (!blog.images?.length) {
+      throw new NotFoundException(`no images found`);
+    }
+
+    const imagesToDelete = blog.images.filter((image) =>
+      body.filePaths.includes(image),
+    );
+    await deleteImages(imagesToDelete);
+    blog.images = blog.images.filter(
+      (image) => !body.filePaths.includes(image),
+    );
+    await blog.save();
+    return {
+      message: `${body.filePaths.length > 1 ? `images` : `image`} deleted successfully`,
+    };
   }
 }

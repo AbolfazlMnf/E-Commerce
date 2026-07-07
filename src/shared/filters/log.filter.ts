@@ -14,14 +14,16 @@ export class LogFilter<T extends HttpException> implements ExceptionFilter {
   async catch(exception: T, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
-    const status = exception.getStatus();
-    if (status === 404) {
-      response
-        .status(status)
-        .send({ statusCode: 404, message: `Not Found !!` });
-    } else {
-      response.send(exception.getResponse());
-    }
+    // const status = exception.getStatus();
+    // if (status === 404) {
+    //   response
+    //     .status(status)
+    //     .send({ statusCode: 404, message: `Not Found !!` });
+    // } else {
+    //   response.send(exception.getResponse());
+    // }
+    response.send(exception.getResponse());
+
     await this.appService.addLog({
       type: LogType.Error,
       url: request.url,
