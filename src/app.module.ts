@@ -13,6 +13,9 @@ import { LogFilter } from './shared/filters/log.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { IdPipe } from './shared/pipes/id.pipe';
+import { UserModule } from './user/user.module';
+import { AuthController } from './user/controllers/auth.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -32,6 +35,11 @@ import { IdPipe } from './shared/pipes/id.pipe';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, `..`, `files`),
       serveRoot: `/files`,
+    }),
+    UserModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      global: true,
     }),
   ],
   controllers: [AppController],

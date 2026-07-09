@@ -16,12 +16,22 @@ import { BlogDto } from '../dtos/blog.dto';
 import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 import { BlogService } from '../services/blog.service';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
-import { ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiConsumes,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { DeleteFileDto, FileDto, FilesDto } from 'src/shared/dtos/file.dto';
 import { ImagesPipe } from 'src/shared/pipes/images.pipe';
 
 @ApiTags(`Blogs`)
+// @ApiHeader({
+//   name: `apikey`,
+//   description: `API KEY`,
+// })
 @Controller('blogs')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
