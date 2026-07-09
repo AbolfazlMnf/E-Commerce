@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Role } from '../Schema/user.schema';
 
 export class AuthDto {
   @IsString()
@@ -18,4 +19,11 @@ export class ResendDto {
   @IsNotEmpty()
   @ApiProperty({ required: true })
   mobile!: string;
+}
+
+export class RoleDto {
+  @IsEnum(Role)
+  @IsNotEmpty()
+  @ApiProperty({ required: true, enum: Role })
+  role!: Role;
 }

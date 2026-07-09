@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Order } from 'src/shared/dtos/query.dto';
+import { Order, Sort } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getUserSortOption } from 'src/shared/utils/sort';
 import { UpdateUserDto, UserDto } from 'src/user/dtos/User.dto';
-import { UserQueryDto } from 'src/user/dtos/user.query.dto';
+import { UserQueryDto, UserSort } from 'src/user/dtos/user.query.dto';
 import { Role, User } from 'src/user/Schema/user.schema';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class UserService {
       limit = 5,
       lastName,
       mobile,
-      sort,
+      sort = UserSort.CreatedAt,
       order = Order.Desc,
     } = query;
     const orderOption = getOrderOption(order);
@@ -70,5 +70,13 @@ export class UserService {
     }
     return { message: `user deleted successfully` };
   }
-  async signIn() {}
+  async changeRole(userId: string, role: Role) {
+    const user = await this.findOne(userId);
+    user.role = role;
+    await user.save();
+    return {
+      message: `role changed`,
+      user,
+    };
+  }
 }

@@ -14,7 +14,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { IdPipe } from './shared/pipes/id.pipe';
 import { UserModule } from './user/user.module';
-import { AuthController } from './user/controllers/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

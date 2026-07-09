@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogCategory } from '../Schema/blogCategory.Schema';
 import { Model } from 'mongoose';
-import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
+import { GeneralQueryDto, Order, Sort } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
 import { BlogCategoryDto, UpdateCategoryDto } from '../dtos/blogCategory.dto';
@@ -18,7 +18,13 @@ export class BlogCategoryService {
     private readonly blogCategoryModel: Model<BlogCategory>,
   ) {}
   async findAll(query: GeneralQueryDto) {
-    const { page = 1, limit = 5, sort, order = Order.Desc, title } = query;
+    const {
+      page = 1,
+      limit = 5,
+      sort = Sort.CreatedAt,
+      order = Order.Desc,
+      title,
+    } = query;
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
     const filter = title ? { title: { $regex: title, $options: `i` } } : {};

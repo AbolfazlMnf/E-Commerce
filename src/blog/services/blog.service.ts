@@ -3,13 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../Schema/blog.schema';
 import { Model } from 'mongoose';
 import { BlogDto } from '../dtos/blog.dto';
-import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
+import { GeneralQueryDto, Order, Sort } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
 import { deleteImages, saveImages } from 'src/shared/utils/image';
 import { DeleteFileDto } from 'src/shared/dtos/file.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class BlogService {
@@ -19,7 +20,13 @@ export class BlogService {
     private readonly categoryModel: Model<BlogCategory>,
   ) {}
   async findAll(queries: GeneralQueryDto) {
-    const { page = 1, limit = 5, order = Order.Desc, title, sort } = queries;
+    const {
+      page = 1,
+      limit = 5,
+      order = Order.Desc,
+      title,
+      sort = Sort.CreatedAt,
+    } = queries;
     const filter = title ? { title: { $regex: title, $options: `i` } } : {};
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
@@ -29,7 +36,16 @@ export class BlogService {
         .sort(sortOption)
         .skip((page - 1) * limit)
         .limit(limit)
-        .populate(`category`)
+        .populate([
+          {
+            path: `category`,
+            select: `title`,
+          },
+          {
+            path: `author`,
+            select: `firstName lastName`,
+          },
+        ])
         .exec(),
       this.blogModel.countDocuments(filter).exec(),
     ]);
@@ -42,16 +58,25 @@ export class BlogService {
     }
     return blog;
   }
-  async create(body: BlogDto) {
+  async create(body: BlogDto, user: string) {
     const category = await this.categoryModel.findById(body.category).exec();
     if (!category) {
       throw new NotFoundException(`category Not found `);
     }
-    const newBlog = new this.blogModel(body);
+    const newBlog = new this.blogModel({ ...body, author: user });
     await newBlog.save();
     return {
       message: 'Blog created successfully',
-      blog: newBlog,
+      blog: newBlog.populate([
+        {
+          path: `category`,
+          select: `content title`,
+        },
+        {
+          path: `author`,
+          select: `firstName lastName`,
+        },
+      ]),
     };
   }
   async update(id, body: UpdateBlogDto) {

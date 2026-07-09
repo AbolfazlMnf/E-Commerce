@@ -19,9 +19,8 @@ export const getSortOption = (
 
 export const getUserSortOption = (
   Desc: -1 | 1,
-  sort?: UserSort,
+  sort: UserSort,
 ): Record<string, SortOrder> => {
-  if (!sort) return {};
   switch (sort) {
     case UserSort.LastName:
       return { lastName: Desc };

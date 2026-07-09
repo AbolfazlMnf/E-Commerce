@@ -30,7 +30,10 @@ export class UserQueryDto {
 
   @IsOptional()
   @IsEnum(UserSort)
-  @ApiPropertyOptional({ enum: UserSort })
+  @ApiPropertyOptional({
+    enum: UserSort,
+    description: `default = ${UserSort.CreatedAt} `,
+  })
   sort?: UserSort;
 
   @IsOptional()

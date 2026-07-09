@@ -15,12 +15,12 @@ export enum Order {
 export class GeneralQueryDto {
   @IsOptional()
   @IsPositive()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: `default=1` })
   limit?: number;
 
   @IsOptional()
   @IsPositive()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: `default=1` })
   page?: number;
 
   @IsOptional()
@@ -29,11 +29,14 @@ export class GeneralQueryDto {
 
   @IsOptional()
   @IsEnum(Sort)
-  @ApiPropertyOptional({ enum: Sort })
+  @ApiPropertyOptional({
+    enum: Sort,
+    description: `default = ${Sort.CreatedAt} `,
+  })
   sort?: Sort;
 
   @IsOptional()
   @IsEnum(Order)
-  @ApiPropertyOptional({ enum: Order })
+  @ApiPropertyOptional({ enum: Order, description: `default = ${Order.Desc} ` })
   order?: Order;
 }

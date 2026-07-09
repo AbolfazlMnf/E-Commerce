@@ -10,6 +10,7 @@ import {
   Query,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { BlogDto } from '../dtos/blog.dto';
@@ -26,6 +27,10 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { DeleteFileDto, FileDto, FilesDto } from 'src/shared/dtos/file.dto';
 import { ImagesPipe } from 'src/shared/pipes/images.pipe';
+import { JwtGuard } from 'src/shared/guards/jwt.guard';
+import { RoleGuard } from 'src/shared/guards/role.guard';
+import { Role } from 'src/user/Schema/user.schema';
+import { User } from 'src/shared/decorators/user.decorator';
 
 @ApiTags(`Blogs`)
 // @ApiHeader({
@@ -44,14 +49,17 @@ export class BlogController {
     return this.blogService.findOne(id);
   }
   @Post()
-  create(@Body() body: BlogDto) {
-    return this.blogService.create(body);
+  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
+  create(@Body() body: BlogDto, @User() user: string) {
+    return this.blogService.create(body, user);
   }
   @Patch(`:id`)
+  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   update(@Param(`id`) id: string, @Body() body: UpdateBlogDto) {
     return this.blogService.update(id, body);
   }
   @Delete(`:id`)
+  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   delete(@Param(`id`) id: string) {
     return this.blogService.delete(id);
   }
@@ -89,6 +97,7 @@ export class BlogController {
   // }
 
   @Post(`:id/upload-images`)
+  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   @UseInterceptors(FilesInterceptor(`files`))
   @ApiConsumes(`multipart/form-data`)
   @ApiOperation({
@@ -109,6 +118,7 @@ export class BlogController {
   }
 
   @Delete(`:id/delete-images`)
+  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   @ApiOperation({
     summary: `delete images`,
     description: `delete images of blog`,
