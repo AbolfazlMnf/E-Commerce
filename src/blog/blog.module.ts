@@ -8,6 +8,7 @@ import {
   BlogCategorySchema,
 } from 'src/blog-category/Schema/blogCategory.Schema';
 import { SiteBlogController } from './controllers/site-blog.controller';
+import { BlogCategoryService } from 'src/blog-category/services/blog-category.service';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { SiteBlogController } from './controllers/site-blog.controller';
     ]),
   ],
   controllers: [BlogController, SiteBlogController],
-  providers: [BlogService],
+  providers: [BlogService, BlogCategoryService],
 })
 export class BlogModule {}

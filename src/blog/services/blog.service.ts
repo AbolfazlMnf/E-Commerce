@@ -49,7 +49,7 @@ export class BlogService {
         .populate([
           {
             path: `category`,
-            select: `title`,
+            select: `title content`,
           },
           {
             path: `author`,
@@ -75,18 +75,20 @@ export class BlogService {
     }
     const newBlog = new this.blogModel({ ...body, author: user });
     await newBlog.save();
+    await newBlog.populate([
+      {
+        path: `category`,
+        select: `title content`,
+      },
+      {
+        path: `author`,
+        select: `firstName lastName`,
+      },
+    ]);
+
     return {
       message: 'Blog created successfully',
-      blog: newBlog.populate([
-        {
-          path: `category`,
-          select: `content title`,
-        },
-        {
-          path: `author`,
-          select: `firstName lastName`,
-        },
-      ]),
+      blog: newBlog,
     };
   }
   async update(id, body: UpdateBlogDto) {

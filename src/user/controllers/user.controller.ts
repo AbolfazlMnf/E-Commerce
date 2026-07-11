@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserQueryDto } from '../dtos/user.query.dto';
 import { UpdateUserDto, UserDto } from '../dtos/User.dto';
 import { EnglishPipe } from 'src/shared/pipes/english.pipe';
@@ -23,8 +23,9 @@ import { Role } from '../Schema/user.schema';
 import { RoleDto } from '../dtos/auth.dto';
 
 @ApiTags(`Users`)
+@ApiBearerAuth()
 @Controller('users')
-@UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
+// @UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
@@ -49,7 +50,7 @@ export class UserController {
   delete(@Param(`id`) id: string) {
     return this.userService.deleteUser(id);
   }
-  @Put(`:id`)
+  @Put(`:id/role`)
   changeRole(@Param(`id`) id: string, @Body() body: RoleDto) {
     return this.userService.changeRole(id, body.role);
   }

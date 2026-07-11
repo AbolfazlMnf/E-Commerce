@@ -12,10 +12,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { BlogDto } from '../dtos/blog.dto';
-import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 import { BlogService } from '../services/blog.service';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
-import { ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { DeleteFileDto, FileDto, FilesDto } from 'src/shared/dtos/file.dto';
 import { ImagesPipe } from 'src/shared/pipes/images.pipe';
@@ -31,7 +36,9 @@ import { BlogQueryDto } from '../dtos/blog.query.dto';
 //   name: `apikey`,
 //   description: `API KEY`,
 // })
+@ApiBearerAuth()
 @Controller('blogs')
+@UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Get()
@@ -43,17 +50,14 @@ export class BlogController {
     return this.blogService.findOne(id);
   }
   @Post()
-  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   create(@Body(slugPipe) body: BlogDto, @User() user: string) {
     return this.blogService.create(body, user);
   }
   @Patch(`:id`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   update(@Param(`id`) id: string, @Body(slugPipe) body: UpdateBlogDto) {
     return this.blogService.update(id, body);
   }
   @Delete(`:id`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   delete(@Param(`id`) id: string) {
     return this.blogService.delete(id);
   }
@@ -91,7 +95,6 @@ export class BlogController {
   // }
 
   @Post(`:id/upload-images`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   @UseInterceptors(FilesInterceptor(`files`))
   @ApiConsumes(`multipart/form-data`)
   @ApiOperation({
@@ -112,7 +115,6 @@ export class BlogController {
   }
 
   @Delete(`:id/delete-images`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
   @ApiOperation({
     summary: `delete images`,
     description: `delete images of blog`,

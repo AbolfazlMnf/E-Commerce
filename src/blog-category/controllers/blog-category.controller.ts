@@ -15,8 +15,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { BlogCategoryService } from '../services/blog-category.service';
-import { ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BlogCategoryDto, UpdateCategoryDto } from '../dtos/blogCategory.dto';
 import { JwtGuard } from 'src/shared/guards/jwt.guard';
 import { RoleGuard } from 'src/shared/guards/role.guard';
@@ -27,7 +32,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileDto } from 'src/shared/dtos/file.dto';
 
 @ApiTags(`Blog-Category`)
+@ApiBearerAuth()
 @Controller('blog-category')
+@UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
 export class BlogCategoryController {
   constructor(private readonly blogCategoryService: BlogCategoryService) {}
   @Get()
@@ -39,17 +46,14 @@ export class BlogCategoryController {
     return this.blogCategoryService.findOne(id);
   }
   @Post()
-  @UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
   create(@Body(slugPipe) body: BlogCategoryDto) {
     return this.blogCategoryService.create(body);
   }
   @Patch(`:id`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
   update(@Param(`id`) id: string, @Body(slugPipe) body: UpdateCategoryDto) {
     return this.blogCategoryService.update(id, body);
   }
   @Delete(`:id`)
-  @UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
   delete(@Param(`id`) id: string) {
     return this.blogCategoryService.delete(id);
   }
