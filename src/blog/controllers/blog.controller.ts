@@ -4,11 +4,9 @@ import {
   Delete,
   Get,
   Param,
-  ParseFilePipe,
   Patch,
   Post,
   Query,
-  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -17,13 +15,7 @@ import { BlogDto } from '../dtos/blog.dto';
 import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 import { BlogService } from '../services/blog.service';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
-import {
-  ApiConsumes,
-  ApiHeader,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { DeleteFileDto, FileDto, FilesDto } from 'src/shared/dtos/file.dto';
 import { ImagesPipe } from 'src/shared/pipes/images.pipe';
@@ -31,6 +23,8 @@ import { JwtGuard } from 'src/shared/guards/jwt.guard';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Role } from 'src/user/Schema/user.schema';
 import { User } from 'src/shared/decorators/user.decorator';
+import { slugPipe } from 'src/shared/pipes/slug.pipe';
+import { BlogQueryDto } from '../dtos/blog.query.dto';
 
 @ApiTags(`Blogs`)
 // @ApiHeader({
@@ -41,7 +35,7 @@ import { User } from 'src/shared/decorators/user.decorator';
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
   @Get()
-  findAll(@Query() query: GeneralQueryDto) {
+  findAll(@Query() query: BlogQueryDto) {
     return this.blogService.findAll(query);
   }
   @Get(`:id`)
@@ -50,12 +44,12 @@ export class BlogController {
   }
   @Post()
   @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
-  create(@Body() body: BlogDto, @User() user: string) {
+  create(@Body(slugPipe) body: BlogDto, @User() user: string) {
     return this.blogService.create(body, user);
   }
   @Patch(`:id`)
   @UseGuards(JwtGuard, new RoleGuard([Role.CopyRighter, Role.Admin]))
-  update(@Param(`id`) id: string, @Body() body: UpdateBlogDto) {
+  update(@Param(`id`) id: string, @Body(slugPipe) body: UpdateBlogDto) {
     return this.blogService.update(id, body);
   }
   @Delete(`:id`)

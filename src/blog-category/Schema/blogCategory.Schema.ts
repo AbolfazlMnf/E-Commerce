@@ -8,6 +8,19 @@ export class BlogCategory extends Document {
 
   @Prop()
   content?: string;
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  image?: string;
+
+  @Prop({
+    required: true,
+    unique: true,
+    type: String,
+  })
+  url!: string;
 }
 
 export const BlogCategorySchema = SchemaFactory.createForClass(BlogCategory);

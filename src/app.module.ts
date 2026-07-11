@@ -15,6 +15,7 @@ import { join } from 'path';
 import { IdPipe } from './shared/pipes/id.pipe';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -25,6 +26,12 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     MongooseModule.forRoot(process.env.DB_URL ?? ``),
     BlogCategoryModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 30,
+      },
+    ]),
     MongooseModule.forFeature([
       {
         name: Log.name,
@@ -51,10 +58,6 @@ import { JwtModule } from '@nestjs/jwt';
     {
       provide: APP_FILTER,
       useClass: LogFilter,
-    },
-    {
-      provide: APP_PIPE,
-      useClass: IdPipe,
     },
   ],
 })

@@ -1,5 +1,5 @@
 import { SortOrder } from 'mongoose';
-import { Sort } from '../dtos/query.dto';
+import { Sort } from 'src/blog/dtos/blog.query.dto';
 import { UserSort } from 'src/user/dtos/user.query.dto';
 
 export const getSortOption = (

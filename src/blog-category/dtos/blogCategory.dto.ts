@@ -10,6 +10,10 @@ export class BlogCategoryDto {
   @IsOptional()
   @ApiProperty()
   content?: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  url!: string;
 }
 
 export class UpdateCategoryDto extends PartialType(BlogCategoryDto) {}

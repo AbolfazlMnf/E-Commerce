@@ -10,6 +10,14 @@ export class Blog extends Document {
 
   @Prop()
   content!: string;
+
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
+  url!: string;
+
   @Prop({
     type: Types.ObjectId,
     ref: BlogCategory.name,

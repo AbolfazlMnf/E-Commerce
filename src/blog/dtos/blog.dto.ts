@@ -11,6 +11,10 @@ export class BlogDto {
   @IsNotEmpty()
   @ApiProperty()
   content!: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  url!: string;
 
   @IsMongoId()
   @IsNotEmpty()

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../Schema/blog.schema';
 import { Model } from 'mongoose';
 import { BlogDto } from '../dtos/blog.dto';
-import { GeneralQueryDto, Order, Sort } from 'src/shared/dtos/query.dto';
+import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
@@ -11,6 +11,7 @@ import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
 import { deleteImages, saveImages } from 'src/shared/utils/image';
 import { DeleteFileDto } from 'src/shared/dtos/file.dto';
 import { ObjectId } from 'mongodb';
+import { BlogQueryDto, Sort } from '../dtos/blog.query.dto';
 
 @Injectable()
 export class BlogService {
@@ -19,20 +20,29 @@ export class BlogService {
     @InjectModel(BlogCategory.name)
     private readonly categoryModel: Model<BlogCategory>,
   ) {}
-  async findAll(queries: GeneralQueryDto) {
+  async findAll(queries: BlogQueryDto, select?: Record<string, -1 | 1>) {
     const {
       page = 1,
       limit = 5,
       order = Order.Desc,
       title,
       sort = Sort.CreatedAt,
+      url,
     } = queries;
-    const filter = title ? { title: { $regex: title, $options: `i` } } : {};
+    const filter: any = {};
+
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
+    }
+
+    if (url) {
+      filter.url = { $regex: url, $options: 'i' };
+    }
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
     const [blogs, count] = await Promise.all([
       this.blogModel
-        .find(filter)
+        .find(filter, select)
         .sort(sortOption)
         .skip((page - 1) * limit)
         .limit(limit)

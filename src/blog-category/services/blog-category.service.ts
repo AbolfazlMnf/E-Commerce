@@ -6,10 +6,12 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogCategory } from '../Schema/blogCategory.Schema';
 import { Model } from 'mongoose';
-import { GeneralQueryDto, Order, Sort } from 'src/shared/dtos/query.dto';
+import { Order } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
 import { BlogCategoryDto, UpdateCategoryDto } from '../dtos/blogCategory.dto';
+import { BlogQueryDto, Sort } from 'src/blog/dtos/blog.query.dto';
+import { deleteImages, saveImage } from 'src/shared/utils/image';
 
 @Injectable()
 export class BlogCategoryService {
@@ -17,20 +19,29 @@ export class BlogCategoryService {
     @InjectModel(BlogCategory.name)
     private readonly blogCategoryModel: Model<BlogCategory>,
   ) {}
-  async findAll(query: GeneralQueryDto) {
+  async findAll(query: BlogQueryDto, select?: Record<string, -1 | 1>) {
     const {
       page = 1,
       limit = 5,
       sort = Sort.CreatedAt,
       order = Order.Desc,
       title,
+      url,
     } = query;
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
-    const filter = title ? { title: { $regex: title, $options: `i` } } : {};
+    const filter: any = {};
+
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
+    }
+
+    if (url) {
+      filter.url = { $regex: url, $options: 'i' };
+    }
     const [categories, count] = await Promise.all([
       this.blogCategoryModel
-        .find(filter)
+        .find(filter, select)
         .sort(sortOption)
         .skip((page - 1) * limit)
         .limit(limit)
@@ -71,5 +82,22 @@ export class BlogCategoryService {
       throw new NotFoundException();
     }
     return { message: `Category deleted successfully` };
+  }
+  async UploadImage(id: string, file: Express.Multer.File) {
+    const category = await this.findOne(id);
+    const imageUrl = await saveImage(file, `blog-category`);
+    category.image = imageUrl;
+    await category.save();
+    return { message: `image saved successfully` };
+  }
+  async deleteImage(id: string) {
+    const category = await this.findOne(id);
+    if (!category.image) {
+      throw new NotFoundException(`image not found`);
+    }
+    await deleteImages([category.image]);
+    category.image = undefined;
+    await category.save();
+    return { message: `image deleted successfully` };
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Order, Sort } from 'src/shared/dtos/query.dto';
+import { Order } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getUserSortOption } from 'src/shared/utils/sort';
 import { UpdateUserDto, UserDto } from 'src/user/dtos/User.dto';
