@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 
 export enum Sort {
@@ -8,18 +8,19 @@ export enum Sort {
   UpdatedAt = `updatedAt`,
 }
 
-export class BlogQueryDto extends GeneralQueryDto {
+export class BlogCategoryQueryDto extends GeneralQueryDto {
   @IsOptional()
   @ApiPropertyOptional()
   title?: string;
 
   @IsOptional()
-  @ApiPropertyOptional()
-  @IsString()
-  category?: string;
-
-  @IsOptional()
-  @IsArray()
+  @ApiPropertyOptional({
+    type: `array`,
+    required: false,
+    items: {
+      type: `string`,
+    },
+  })
   exclude?: string[];
 
   @IsOptional()

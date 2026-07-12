@@ -30,6 +30,7 @@ import { BlogQueryDto } from 'src/blog/dtos/blog.query.dto';
 import { slugPipe } from 'src/shared/pipes/slug.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileDto } from 'src/shared/dtos/file.dto';
+import { BlogCategoryQueryDto } from '../dtos/blogCategory.query.dto';
 
 @ApiTags(`Blog-Category`)
 @ApiBearerAuth()
@@ -38,7 +39,7 @@ import { FileDto } from 'src/shared/dtos/file.dto';
 export class BlogCategoryController {
   constructor(private readonly blogCategoryService: BlogCategoryService) {}
   @Get()
-  getAll(@Query() query: BlogQueryDto) {
+  getAll(@Query() query: BlogCategoryQueryDto) {
     return this.blogCategoryService.findAll(query);
   }
   @Get(`:id`)

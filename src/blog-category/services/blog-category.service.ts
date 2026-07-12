@@ -12,6 +12,7 @@ import { getSortOption } from 'src/shared/utils/sort';
 import { BlogCategoryDto, UpdateCategoryDto } from '../dtos/blogCategory.dto';
 import { BlogQueryDto, Sort } from 'src/blog/dtos/blog.query.dto';
 import { deleteImages, saveImage } from 'src/shared/utils/image';
+import { BlogCategoryQueryDto } from '../dtos/blogCategory.query.dto';
 
 @Injectable()
 export class BlogCategoryService {
@@ -19,7 +20,7 @@ export class BlogCategoryService {
     @InjectModel(BlogCategory.name)
     private readonly blogCategoryModel: Model<BlogCategory>,
   ) {}
-  async findAll(query: BlogQueryDto, select?: Record<string, -1 | 1>) {
+  async findAll(query: BlogCategoryQueryDto, select?: Record<string, -1 | 1>) {
     const {
       page = 1,
       limit = 5,
@@ -27,6 +28,7 @@ export class BlogCategoryService {
       order = Order.Desc,
       title,
       url,
+      exclude,
     } = query;
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
@@ -38,6 +40,9 @@ export class BlogCategoryService {
 
     if (url) {
       filter.url = { $regex: url, $options: 'i' };
+    }
+    if (exclude) {
+      filter._id = { $nin: exclude };
     }
     const [categories, count] = await Promise.all([
       this.blogCategoryModel
@@ -52,6 +57,13 @@ export class BlogCategoryService {
   }
   async findOne(id: string) {
     const category = await this.blogCategoryModel.findById(id).exec();
+    if (!category) {
+      throw new NotFoundException();
+    }
+    return category;
+  }
+  async findOneWithUrl(url: string) {
+    const category = await this.blogCategoryModel.findOne({ url }).exec();
     if (!category) {
       throw new NotFoundException();
     }

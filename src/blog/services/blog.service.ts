@@ -28,6 +28,8 @@ export class BlogService {
       title,
       sort = Sort.CreatedAt,
       url,
+      category,
+      exclude,
     } = queries;
     const filter: any = {};
 
@@ -37,6 +39,12 @@ export class BlogService {
 
     if (url) {
       filter.url = { $regex: url, $options: 'i' };
+    }
+    if (category) {
+      filter.category = category;
+    }
+    if (exclude?.length) {
+      filter._id = { $nin: exclude };
     }
     const orderOption = getOrderOption(order);
     const sortOption = getSortOption(orderOption, sort);
@@ -63,6 +71,13 @@ export class BlogService {
   }
   async findOne(id: string) {
     const blog = await this.blogModel.findById(id).exec();
+    if (!blog) {
+      throw new NotFoundException(`blog NotFound`);
+    }
+    return blog;
+  }
+  async findOneWithUrl(url: string) {
+    const blog = await this.blogModel.findOne({ url }).exec();
     if (!blog) {
       throw new NotFoundException(`blog NotFound`);
     }
