@@ -1,5 +1,6 @@
 import { SortOrder } from 'mongoose';
 import { Sort } from 'src/blog/dtos/blog.query.dto';
+import { SeoSort } from 'src/seo/dtos/seo.query';
 import { UserSort } from 'src/user/dtos/user.query.dto';
 
 export const getSortOption = (
@@ -27,6 +28,21 @@ export const getUserSortOption = (
     case UserSort.CreatedAt:
       return { createdAt: Desc };
     case UserSort.UpdatedAt:
+      return { updatedAt: Desc };
+  }
+};
+
+export const getSeoSortOption = (
+  Desc: -1 | 1,
+  sort?: SeoSort,
+): Record<string, SortOrder> => {
+  if (!sort) return {};
+  switch (sort) {
+    case SeoSort.Title:
+      return { title: Desc };
+    case SeoSort.CreatedAt:
+      return { createdAt: Desc };
+    case SeoSort.UpdatedAt:
       return { updatedAt: Desc };
   }
 };

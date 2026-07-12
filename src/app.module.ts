@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
-import { BlogCategoryModule } from './blog-category/blog-category.module';
 import { TimeMiddleware } from './shared/middlewares/time.middleware';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { LogInterceptor } from './shared/interceptors/log.interceptor';
@@ -16,6 +15,7 @@ import { IdPipe } from './shared/pipes/id.pipe';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { SeoModule } from './seo/seo.module';
 
 @Module({
   imports: [
@@ -25,7 +25,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
       envFilePath: `.env`,
     }),
     MongooseModule.forRoot(process.env.DB_URL ?? ``),
-    BlogCategoryModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -47,6 +46,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
       secret: process.env.JWT_SECRET,
       global: true,
     }),
+    SeoModule,
   ],
   controllers: [AppController],
   providers: [

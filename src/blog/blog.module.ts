@@ -6,9 +6,10 @@ import { Blog, BlogSchema } from './Schema/blog.schema';
 import {
   BlogCategory,
   BlogCategorySchema,
-} from 'src/blog-category/Schema/blogCategory.Schema';
+} from 'src/blog/Schema/blogCategory.Schema';
 import { SiteBlogController } from './controllers/site-blog.controller';
-import { BlogCategoryService } from 'src/blog-category/services/blog-category.service';
+import { BlogCategoryService } from 'src/blog/services/blog-category.service';
+import { BlogCategoryController } from './controllers/blog-category.controller';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { BlogCategoryService } from 'src/blog-category/services/blog-category.se
       },
     ]),
   ],
-  controllers: [BlogController, SiteBlogController],
+  controllers: [BlogController, SiteBlogController, BlogCategoryController],
   providers: [BlogService, BlogCategoryService],
 })
 export class BlogModule {}

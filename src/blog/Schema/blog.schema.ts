@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
+import { BlogCategory } from 'src/blog/Schema/blogCategory.Schema';
 import { User } from 'src/user/Schema/user.schema';
 
 @Schema({ timestamps: true, versionKey: false })

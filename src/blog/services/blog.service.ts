@@ -7,7 +7,7 @@ import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
-import { BlogCategory } from 'src/blog-category/Schema/blogCategory.Schema';
+import { BlogCategory } from 'src/blog/Schema/blogCategory.Schema';
 import { deleteImages, saveImages } from 'src/shared/utils/image';
 import { DeleteFileDto } from 'src/shared/dtos/file.dto';
 import { ObjectId } from 'mongodb';

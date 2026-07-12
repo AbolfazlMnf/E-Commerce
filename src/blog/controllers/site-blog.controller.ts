@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { BlogCategoryService } from 'src/blog-category/services/blog-category.service';
+import { BlogCategoryService } from 'src/blog/services/blog-category.service';
 import { BlogQueryDto } from '../dtos/blog.query.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { BlogCategoryQueryDto } from 'src/blog-category/dtos/blogCategory.query.dto';
+import { BlogCategoryQueryDto } from 'src/blog/dtos/blogCategory.query.dto';
 import { BlogService } from '../services/blog.service';
 
 @ApiTags(`Public Blog`)
