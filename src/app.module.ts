@@ -16,6 +16,7 @@ import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { SeoModule } from './seo/seo.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { SeoModule } from './seo/seo.module';
       global: true,
     }),
     SeoModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [

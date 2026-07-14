@@ -25,7 +25,7 @@ import { RoleDto } from '../dtos/auth.dto';
 @ApiTags(`Users`)
 @ApiBearerAuth()
 @Controller('users')
-// @UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
+@UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()

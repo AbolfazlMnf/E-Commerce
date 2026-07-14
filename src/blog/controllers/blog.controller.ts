@@ -30,6 +30,7 @@ import { Role } from 'src/user/Schema/user.schema';
 import { User } from 'src/shared/decorators/user.decorator';
 import { slugPipe } from 'src/shared/pipes/slug.pipe';
 import { BlogQueryDto } from '../dtos/blog.query.dto';
+import { BodyIdPipe } from 'src/shared/pipes/body-id.pipe';
 
 @ApiTags(`Blogs`)
 // @ApiHeader({
@@ -50,11 +51,17 @@ export class BlogController {
     return this.blogService.findOne(id);
   }
   @Post()
-  create(@Body(slugPipe) body: BlogDto, @User() user: string) {
+  create(
+    @Body(slugPipe, new BodyIdPipe([`category`])) body: BlogDto,
+    @User() user: string,
+  ) {
     return this.blogService.create(body, user);
   }
   @Patch(`:id`)
-  update(@Param(`id`) id: string, @Body(slugPipe) body: UpdateBlogDto) {
+  update(
+    @Param(`id`) id: string,
+    @Body(slugPipe, new BodyIdPipe([`category`])) body: UpdateBlogDto,
+  ) {
     return this.blogService.update(id, body);
   }
   @Delete(`:id`)

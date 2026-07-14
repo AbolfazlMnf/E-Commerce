@@ -45,10 +45,7 @@ export class UserService {
     const newUser = new this.userModel(body);
     newUser.role = Role.User;
     await newUser.save();
-    return {
-      message: `user created successfully`,
-      newUser,
-    };
+    return newUser;
   }
   async findOne(id: string) {
     const user = await this.userModel.findById(id).exec();
