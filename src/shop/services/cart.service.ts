@@ -48,7 +48,25 @@ export class CartService {
   async getCartDetail(id: string) {
     const cart = await this.findCart(id);
     const cartItems = await this.findCartItems(id);
-    return { cart, cartItems };
+    const prices = this.getPrices(id);
+    return { cart, cartItems, prices };
+  }
+  async getPrices(id: string) {
+    const items = await this.findCartItems(id);
+
+    let totalPriceWithoutDiscount = 0;
+    let totalPriceWithDiscount = 0;
+    for (const item of items) {
+      const price = item?.product?.price;
+      const discount = item?.product?.discount;
+      const quantity = item?.quantity;
+      const discountedPrice = price - price * (discount / 100);
+      const itemPriceWithDiscount = discountedPrice * quantity;
+      const itemPriceWithoutDiscount = price * quantity;
+      totalPriceWithDiscount += itemPriceWithDiscount;
+      totalPriceWithoutDiscount += itemPriceWithoutDiscount;
+    }
+    return { totalPriceWithDiscount, totalPriceWithoutDiscount };
   }
   async findCartItem(id: string) {
     const cartItem = await this.cartItemModel.findById(id).exec();
