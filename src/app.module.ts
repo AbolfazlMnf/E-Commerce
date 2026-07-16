@@ -18,6 +18,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { SeoModule } from './seo/seo.module';
 import { ProductModule } from './product/product.module';
 import { TicketModule } from './ticket/ticket.module';
+import { ShopModule } from './shop/shop.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { TicketModule } from './ticket/ticket.module';
     SeoModule,
     ProductModule,
     TicketModule,
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [

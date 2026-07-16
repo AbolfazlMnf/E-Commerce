@@ -19,7 +19,7 @@ export class Product extends Document {
   @Prop()
   price!: number;
 
-  @Prop()
+  @Prop({ required: false, default: null })
   discount!: number;
 
   @Prop({
