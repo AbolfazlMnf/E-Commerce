@@ -34,16 +34,27 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ImagesPipe } from 'src/shared/pipes/images.pipe';
 import { FilesDto } from 'src/shared/dtos/file.dto';
 import { BodyIdPipe } from 'src/shared/pipes/body-id.pipe';
+import { StockDto } from '../dtos/stock.dto';
+import { EditedBy } from 'src/inventory/schemas/inventory-record.schema';
+import { InventoryQueryDto } from 'src/inventory/dtos/inventory-record.query.dto';
+import { InventoryRecordService } from 'src/inventory/services/inventory-record.service';
 
 @ApiTags('Product')
 @Controller('product')
 @UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
 @ApiBearerAuth()
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly inventoryService: InventoryRecordService,
+  ) {}
   @Get()
   findAll(@Query() queryParams: ProductQueryDto) {
     return this.productService.findAll(queryParams);
+  }
+  @Get(`inventory-record`)
+  getInventoryRecord(@Query() queryParams: InventoryQueryDto) {
+    return this.inventoryService.findAll(queryParams);
   }
 
   @Post()
@@ -111,5 +122,13 @@ export class ProductController {
     @Query() query: DeleteProductThumbnail,
   ) {
     return this.productService.deleteThumb(id, query.thumbnail);
+  }
+  @Post(`:id/add-stock`)
+  addStock(@Param(`id`) id: string, @Body() body: StockDto) {
+    return this.productService.addStock(id, body.quantity, EditedBy.Admin);
+  }
+  @Post(`:id/remove-stock`)
+  removeStock(@Param(`id`) id: string, @Body() body: StockDto) {
+    return this.productService.removeStock(id, body.quantity, EditedBy.Order);
   }
 }

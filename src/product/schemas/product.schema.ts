@@ -23,6 +23,12 @@ export class Product extends Document {
   discount!: number;
 
   @Prop({
+    required: false,
+    default: 0,
+  })
+  stock?: number;
+
+  @Prop({
     type: Types.ObjectId,
     ref: ProductCategory.name,
     required: true,

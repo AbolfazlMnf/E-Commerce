@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProductDto } from '../dtos/product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from '../schemas/product.schema';
@@ -10,11 +14,17 @@ import { getProductSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { Order } from 'src/shared/dtos/query.dto';
 import { deleteImages, saveImage, saveImages } from 'src/shared/utils/image';
+import { InventoryRecordService } from 'src/inventory/services/inventory-record.service';
+import {
+  Action,
+  EditedBy,
+} from 'src/inventory/schemas/inventory-record.schema';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
+    private readonly inventoryService: InventoryRecordService,
   ) {}
 
   async findAll(queryParams: ProductQueryDto, selectObject: any = { __v: 0 }) {
@@ -135,6 +145,52 @@ export class ProductService {
     product.thumbnail = ``;
     await product.save();
     return { message: `thumbnail deleted successfully`, product };
+  }
+  async addStock(
+    id: string,
+    quantity: number,
+    editedBy: EditedBy,
+    order?: string,
+  ) {
+    const product = await this.findOne(id);
+    const oldStock = product.stock || 0;
+    product.stock = oldStock + quantity;
+    await product.save();
+    await this.inventoryService.createInventory({
+      action: Action.Add,
+      editedBy,
+      quantity,
+      product: id,
+      order,
+    });
+    return product;
+  }
+  async removeStock(
+    id: string,
+    quantity: number,
+    editedBy: EditedBy,
+    order?: string,
+  ) {
+    const product = await this.findOne(id);
+    const oldStock = product.stock || 0;
+    if (oldStock === 0) {
+      throw new BadRequestException(`the stock is 0`);
+    }
+    if (oldStock < quantity) {
+      throw new BadRequestException(
+        `quantity must not be more than current stock`,
+      );
+    }
+    product.stock = oldStock - quantity;
+    await product.save();
+    await this.inventoryService.createInventory({
+      action: Action.Remove,
+      editedBy,
+      quantity,
+      product: id,
+      order,
+    });
+    return product;
   }
   async deleteImages(id: string, paths: string[]) {
     const product = await this.findOne(id);
