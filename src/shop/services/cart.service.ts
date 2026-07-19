@@ -121,4 +121,11 @@ export class CartService {
       return { message: `cart deleted` };
     }
   }
+  async deleteCartAndItems(id: string) {
+    const items = await this.findCartItems(id);
+    for (const item of items) {
+      await this.removeCartItem(item._id.toString());
+    }
+    await this.removeCart(id);
+  }
 }

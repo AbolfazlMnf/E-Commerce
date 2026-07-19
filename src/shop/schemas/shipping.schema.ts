@@ -10,7 +10,7 @@ export class Shipping extends Document {
   price!: number;
 
   @Prop({ required: false, default: null })
-  freeShippingThreshold?: number;
+  freeShippingThreshold!: number;
 }
 
 export const shippingSchema = SchemaFactory.createForClass(Shipping);

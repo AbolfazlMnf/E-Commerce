@@ -174,7 +174,7 @@ export class ProductService {
     const product = await this.findOne(id);
     const oldStock = product.stock || 0;
     if (oldStock === 0) {
-      throw new BadRequestException(`the stock is 0`);
+      throw new BadRequestException(`the stock of ${product.title} is 0`);
     }
     if (oldStock < quantity) {
       throw new BadRequestException(

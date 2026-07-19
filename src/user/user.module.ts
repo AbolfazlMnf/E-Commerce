@@ -10,6 +10,7 @@ import { Address, addressSchema } from './Schema/address.schema';
 import { AddressService } from './services/address.service';
 
 @Module({
+  exports: [AddressService],
   imports: [
     MongooseModule.forFeature([
       {
