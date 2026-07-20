@@ -25,17 +25,7 @@ export class SiteOrderController {
   @Get(`callback`)
   async callback(@Query() query: any) {
     if (query.authority) {
-      const order = await this.orderService.findOrder(query.authority);
-      const verifyResponse = await this.orderService.checkOrder(
-        order._id.toString(),
-      );
-      if (verifyResponse?.code === 100 || verifyResponse?.code === 101) {
-        order.status = OrderStatus.Paid;
-        await this.cartService.deleteCartAndItems(order._id.toString());
-      } else {
-        order.status = OrderStatus.Canceled;
-      }
-      await order.save();
+      await this.orderService.callback(query.authority ?? ``);
       return response.redirect(``);
     } else {
       return response.redirect(``);

@@ -19,6 +19,7 @@ import { SeoModule } from './seo/seo.module';
 import { ProductModule } from './product/product.module';
 import { TicketModule } from './ticket/ticket.module';
 import { ShopModule } from './shop/shop.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -48,6 +49,12 @@ import { ShopModule } from './shop/shop.module';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       global: true,
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: +(process?.env?.REDIS_PORT ?? `3000`),
+      },
     }),
     SeoModule,
     ProductModule,

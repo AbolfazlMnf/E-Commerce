@@ -14,6 +14,8 @@ import { CreateOrderDto } from '../dtos/create-order.dto';
 import axios from 'axios';
 import { ProductService } from 'src/product/services/product.service';
 import { EditedBy } from 'src/inventory/schemas/inventory-record.schema';
+import { InjectQueue } from '@nestjs/bull';
+import type { Queue } from 'bull';
 
 @Injectable()
 export class OrderService {
@@ -25,6 +27,7 @@ export class OrderService {
     private readonly addressService: AddressService,
     private readonly shippingService: ShippingService,
     private readonly productService: ProductService,
+    @InjectQueue(`callback-queue`) private callbackQueue: Queue,
   ) {}
   async createNewOrder(body: CreateOrderDto, user: string) {
     const { cartId, addressId, shippingId } = body;
@@ -74,10 +77,19 @@ export class OrderService {
           EditedBy.Order,
           order._id.toString(),
         );
-
         await orderItem.save();
       }
-
+      await this.callbackQueue.add(
+        `callback-queue`,
+        {
+          refId: order.refId,
+        },
+        {
+          delay: 5000,
+          attempts: 3,
+          backoff: 5000,
+        },
+      );
       await order.save();
       return {
         url: `${process.env.CALL_BACK_URL}?authority=${bankResponse?.authority} `,
@@ -122,5 +134,35 @@ export class OrderService {
     };
     const response = await axios.post(process.env.BANK_URL ?? ``, bankData);
     return response?.data?.data;
+  }
+  async findOrderItems(id: string) {
+    const items = await this.orderItemModel
+      .find({ order: id })
+      .populate(`product`)
+      .exec();
+    return items;
+  }
+  async callback(refId: string) {
+    const order = await this.findOrder(refId);
+    if (order.status === OrderStatus.Paying) {
+      const verifyResponse = await this.checkOrder(order._id.toString());
+      if (verifyResponse?.code === 100 || verifyResponse?.code === 101) {
+        order.status = OrderStatus.Paid;
+        await this.cartService.deleteCartAndItems(order._id.toString());
+      } else {
+        order.status = OrderStatus.Canceled;
+        const items = await this.findOrderItems(order._id.toString());
+        for (const item of items) {
+          await this.productService.addStock(
+            item.product._id.toString(),
+            item.quantity,
+            EditedBy.Order,
+            order._id.toString(),
+          );
+        }
+      }
+    }
+
+    await order.save();
   }
 }

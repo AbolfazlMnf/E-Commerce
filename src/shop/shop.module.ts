@@ -14,6 +14,7 @@ import { OrderItem, orderItemSchema } from './schemas/order-item.schema';
 import { AddressService } from 'src/user/services/address.service';
 import { Address, addressSchema } from 'src/user/Schema/address.schema';
 import { ProductModule } from 'src/product/product.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -44,6 +45,9 @@ import { ProductModule } from 'src/product/product.module';
         schema: addressSchema,
       },
     ]),
+    BullModule.registerQueue({
+      name: `callback-queue`,
+    }),
   ],
   controllers: [CartController, ShippingController, SiteOrderController],
   providers: [CartService, ShippingService, OrderService, AddressService],
