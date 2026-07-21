@@ -22,12 +22,17 @@ export class LogFilter<T extends HttpException> implements ExceptionFilter {
     // } else {
     //   response.send(exception.getResponse());
     // }
-    response.send(exception.getResponse());
 
-    await this.appService.addLog({
-      type: LogType.Error,
-      url: request.url,
-      content: JSON.stringify(exception.getResponse()),
-    });
+    try {
+      await this.appService.addLog({
+        type: LogType.Error,
+        url: request.url,
+        content: JSON.stringify(exception.getResponse()),
+      });
+    } catch (err) {
+      console.log(`LogError`, err);
+    }
+    const status = exception.getStatus();
+    response.status(status).send(exception.getResponse());
   }
 }

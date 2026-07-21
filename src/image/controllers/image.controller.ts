@@ -14,7 +14,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PublicImageDto } from '../dtos/public-image.dto';
 import { JwtGuard } from 'src/shared/guards/jwt.guard';
 import { ImageService } from '../services/image.service';
@@ -22,6 +28,7 @@ import { ImageQueryDto } from '../dtos/image-query.dto';
 
 @ApiTags(`General Image`)
 @Controller('general/image')
+@ApiBearerAuth()
 @UseGuards(JwtGuard)
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}

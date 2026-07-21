@@ -23,6 +23,7 @@ import { BullModule } from '@nestjs/bull';
 import { RedisModule } from './redis/redis.module';
 import { CommentModule } from './comment/comment.module';
 import { ImageModule } from './image/image.module';
+import { MongoExceptionFilter } from './shared/filters/mongo.filter';
 
 @Module({
   imports: [
@@ -77,6 +78,10 @@ import { ImageModule } from './image/image.module';
     {
       provide: APP_FILTER,
       useClass: LogFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: MongoExceptionFilter,
     },
   ],
 })
