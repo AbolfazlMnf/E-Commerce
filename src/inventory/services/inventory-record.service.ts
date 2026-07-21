@@ -6,7 +6,7 @@ import { InventoryRecordDto } from '../dtos/inventory-record.dto';
 import { InventoryQueryDto } from '../dtos/inventory-record.query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 
 @Injectable()
 export class InventoryRecordService {
@@ -21,7 +21,13 @@ export class InventoryRecordService {
     return newBody;
   }
   async findAll(query: InventoryQueryDto) {
-    const { page = 1, limit = 5, product, sort, order = Order.Desc } = query;
+    const {
+      page = 1,
+      limit = 5,
+      product,
+      sort,
+      order = sortOrder.Desc,
+    } = query;
 
     let filter: any = {};
     if (product) {

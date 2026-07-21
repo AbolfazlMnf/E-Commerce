@@ -12,7 +12,7 @@ import { ProductQueryDto } from '../dtos/product-query.dto';
 import { UpdateProductDto } from '../dtos/update-product.dto';
 import { getProductSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { deleteImages, saveImage, saveImages } from 'src/shared/utils/image';
 import { InventoryRecordService } from 'src/inventory/services/inventory-record.service';
 import {
@@ -29,7 +29,7 @@ export class ProductService {
 
   async findAll(queryParams: ProductQueryDto, selectObject: any = { __v: 0 }) {
     const {
-      order = Order.Desc,
+      order = sortOrder.Desc,
       limit = 5,
       page = 1,
       title,

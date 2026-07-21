@@ -20,6 +20,9 @@ import { ProductModule } from './product/product.module';
 import { TicketModule } from './ticket/ticket.module';
 import { ShopModule } from './shop/shop.module';
 import { BullModule } from '@nestjs/bull';
+import { RedisModule } from './redis/redis.module';
+import { CommentModule } from './comment/comment.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -60,6 +63,9 @@ import { BullModule } from '@nestjs/bull';
     ProductModule,
     TicketModule,
     ShopModule,
+    RedisModule,
+    CommentModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [

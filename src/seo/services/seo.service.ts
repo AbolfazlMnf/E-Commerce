@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Seo } from '../schemas/seo.schema';
 import { Model } from 'mongoose';
 import { SeoQueryDto } from '../dtos/seo.query';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSeoSortOption, getSortOption } from 'src/shared/utils/sort';
 import { SeoDto, UpdateSeoDto } from '../dtos/seo.dto';
@@ -12,7 +12,13 @@ import { SeoDto, UpdateSeoDto } from '../dtos/seo.dto';
 export class SeoService {
   constructor(@InjectModel(Seo.name) private readonly seoModel: Model<Seo>) {}
   async findAll(query: SeoQueryDto) {
-    const { sort, order = Order.Desc, limit = 5, page = 1, seoTitle } = query;
+    const {
+      sort,
+      order = sortOrder.Desc,
+      limit = 5,
+      page = 1,
+      seoTitle,
+    } = query;
     const orderOption = getOrderOption(order);
     const sortOption = getSeoSortOption(orderOption, sort);
 

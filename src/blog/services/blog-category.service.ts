@@ -6,26 +6,28 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { BlogCategory } from '../Schema/blogCategory.Schema';
 import { Model } from 'mongoose';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
 import { BlogCategoryDto, UpdateCategoryDto } from '../dtos/blogCategory.dto';
 import { BlogQueryDto, Sort } from 'src/blog/dtos/blog.query.dto';
 import { deleteImages, saveImage } from 'src/shared/utils/image';
 import { BlogCategoryQueryDto } from '../dtos/blogCategory.query.dto';
+import { RedisService } from 'src/redis/services/redis.service';
 
 @Injectable()
 export class BlogCategoryService {
   constructor(
     @InjectModel(BlogCategory.name)
     private readonly blogCategoryModel: Model<BlogCategory>,
+    private readonly redisService: RedisService,
   ) {}
   async findAll(query: BlogCategoryQueryDto, select?: Record<string, -1 | 1>) {
     const {
       page = 1,
       limit = 5,
       sort = Sort.CreatedAt,
-      order = Order.Desc,
+      order = sortOrder.Desc,
       title,
       url,
       exclude,

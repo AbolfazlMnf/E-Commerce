@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { ShippingQueryDto } from '../dtos/shipping-query.dto';
 import { Shipping } from '../schemas/shipping.schema';
 import { ShippingDto } from '../dtos/shipping.dto';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
 import { UpdateShippingDto } from '../dtos/update-shipping.dto';
@@ -18,7 +18,7 @@ export class ShippingService {
   ) {}
 
   async findAll(queryParams: ShippingQueryDto, selectObject: any = { __v: 0 }) {
-    const { limit = 10, page = 1, title, order = Order.Desc } = queryParams;
+    const { limit = 10, page = 1, title, order = sortOrder.Desc } = queryParams;
 
     const query: any = {};
     if (title) query.title = { $regex: title, $options: 'i' };

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getUserSortOption } from 'src/shared/utils/sort';
 import { UpdateUserDto, UserDto } from 'src/user/dtos/User.dto';
@@ -20,7 +20,7 @@ export class UserService {
       lastName,
       mobile,
       sort = UserSort.CreatedAt,
-      order = Order.Desc,
+      order = sortOrder.Desc,
     } = query;
     const orderOption = getOrderOption(order);
     const sortOption = getUserSortOption(orderOption, sort);

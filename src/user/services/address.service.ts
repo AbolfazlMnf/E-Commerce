@@ -6,7 +6,7 @@ import { AddressQueryDto } from '../dtos/address-query.dto';
 import { UpdateAddressDto } from '../dtos/update-address.dto';
 import { AddressDto } from '../dtos/address.dto';
 import { Address } from '../Schema/address.schema';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 import { getSortOption } from 'src/shared/utils/sort';
 
@@ -18,7 +18,7 @@ export class AddressService {
   ) {}
 
   async findAll(queryParams: AddressQueryDto, selectObject: any = { __v: 0 }) {
-    const { limit = 10, page = 1, user, order = Order.Desc } = queryParams;
+    const { limit = 10, page = 1, user, order = sortOrder.Desc } = queryParams;
 
     const query: any = {};
     if (user) query.user = user;

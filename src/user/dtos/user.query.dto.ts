@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsPositive } from 'class-validator';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 
 export enum UserSort {
   LastName = `lastName`,
@@ -37,7 +37,7 @@ export class UserQueryDto {
   sort?: UserSort;
 
   @IsOptional()
-  @IsEnum(Order)
-  @ApiPropertyOptional({ enum: Order, description: `default = DESC` })
-  order?: Order;
+  @IsEnum(sortOrder)
+  @ApiPropertyOptional({ enum: sortOrder, description: `default = DESC` })
+  order?: sortOrder;
 }

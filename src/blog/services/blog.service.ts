@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../Schema/blog.schema';
 import { Model } from 'mongoose';
 import { BlogDto } from '../dtos/blog.dto';
-import { GeneralQueryDto, Order } from 'src/shared/dtos/query.dto';
+import { GeneralQueryDto, sortOrder } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { getOrderOption } from 'src/shared/utils/order';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
@@ -24,7 +24,7 @@ export class BlogService {
     const {
       page = 1,
       limit = 5,
-      order = Order.Desc,
+      order = sortOrder.Desc,
       title,
       sort = Sort.CreatedAt,
       url,

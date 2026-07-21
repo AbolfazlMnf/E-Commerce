@@ -16,6 +16,10 @@ import { ProductService } from 'src/product/services/product.service';
 import { EditedBy } from 'src/inventory/schemas/inventory-record.schema';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
+import { orderQueryDto } from '../dtos/order-query.dto';
+import { getOrderOption } from 'src/shared/utils/order';
+import { sortOrder } from 'src/shared/dtos/query.dto';
+import { getSortOption } from 'src/shared/utils/sort';
 
 @Injectable()
 export class OrderService {
@@ -29,6 +33,71 @@ export class OrderService {
     private readonly productService: ProductService,
     @InjectQueue(`callback-queue`) private callbackQueue: Queue,
   ) {}
+
+  async findAllOrder(queries: orderQueryDto) {
+    const {
+      page = 1,
+      limit = 5,
+      order = sortOrder.Desc,
+      sort,
+      user,
+      status,
+    } = queries;
+    let filter: any = {};
+    if (user) {
+      filter.user = user;
+    }
+    if (status) {
+      filter.status = status;
+    }
+    const orderOption = getOrderOption(order);
+    const sortObj = getSortOption(orderOption, sort);
+    const [orders, count] = await Promise.all([
+      this.orderModel
+        .find(filter)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort(sortObj)
+        .exec(),
+      this.orderModel.countDocuments(filter).exec(),
+    ]);
+    return { orders, count };
+  }
+  async orderDetail(id: string) {
+    const order = await this.orderModel.findById(id).populate([
+      {
+        path: `shipping`,
+        select: `title price`,
+      },
+      {
+        path: `address`,
+        select: `content`,
+      },
+      {
+        path: `user`,
+        select: `lastName firstName mobile`,
+      },
+    ]);
+    const items = await this.findOrderItems(id);
+    return { order, items };
+  }
+  async changeOrderStatus(id: string, status: OrderStatus) {
+    const order = await this.findOrder(id);
+    order.status = status;
+    if (status === OrderStatus.Canceled) {
+      const items = await this.findOrderItems(id);
+      for (const item of items) {
+        await this.productService.addStock(
+          item.product._id.toString(),
+          item.quantity,
+          EditedBy.Admin,
+          order._id.toString(),
+        );
+      }
+    }
+    await order.save();
+    return { message: `status changed` };
+  }
   async createNewOrder(body: CreateOrderDto, user: string) {
     const { cartId, addressId, shippingId } = body;
     const cart = await this.cartService.getCartDetail(cartId);
@@ -117,12 +186,23 @@ export class OrderService {
   }
   async checkOrder(id: string) {
     const order = await this.findOrder(id);
-    const response = await axios.post(process.env.BANK_VERIFY_URL ?? ``, {
-      amount: order.finalPrice,
-      merchant_id: process.env.MERCHANT_ID,
-      authority: order.refId,
-    });
-    return response.data?.data;
+    try {
+      const response = await axios.post(process.env.BANK_VERIFY_URL ?? ``, {
+        amount: order.finalPrice,
+        merchant_id: process.env.MERCHANT_ID,
+        authority: order.refId,
+      });
+      if (
+        response.data?.data?.code === 100 ||
+        response.data?.data?.code === 101
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      return false;
+    }
   }
 
   async createPaymentRequest(finalPrice: number) {
@@ -146,7 +226,7 @@ export class OrderService {
     const order = await this.findOrder(refId);
     if (order.status === OrderStatus.Paying) {
       const verifyResponse = await this.checkOrder(order._id.toString());
-      if (verifyResponse?.code === 100 || verifyResponse?.code === 101) {
+      if (verifyResponse) {
         order.status = OrderStatus.Paid;
         await this.cartService.deleteCartAndItems(order._id.toString());
       } else {

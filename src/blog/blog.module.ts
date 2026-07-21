@@ -10,6 +10,7 @@ import {
 import { SiteBlogController } from './controllers/site-blog.controller';
 import { BlogCategoryService } from 'src/blog/services/blog-category.service';
 import { BlogCategoryController } from './controllers/blog-category.controller';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { BlogCategoryController } from './controllers/blog-category.controller';
         schema: BlogCategorySchema,
       },
     ]),
+    RedisModule,
   ],
   controllers: [BlogController, SiteBlogController, BlogCategoryController],
   providers: [BlogService, BlogCategoryService],

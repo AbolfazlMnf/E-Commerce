@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsPositive } from 'class-validator';
 
-export enum Order {
+export enum sortOrder {
   Desc = `DESC`,
   Asc = `ASC`,
 }
@@ -18,7 +18,10 @@ export class GeneralQueryDto {
   page?: number;
 
   @IsOptional()
-  @IsEnum(Order)
-  @ApiPropertyOptional({ enum: Order, description: `default = ${Order.Desc} ` })
-  order?: Order;
+  @IsEnum(sortOrder)
+  @ApiPropertyOptional({
+    enum: sortOrder,
+    description: `default = ${sortOrder.Desc} `,
+  })
+  order?: sortOrder;
 }

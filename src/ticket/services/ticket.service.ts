@@ -10,7 +10,7 @@ import { TicketMessage } from '../Schemas/ticket.message.schema';
 import { TicketMessageDto } from '../dtos/ticket-message.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 import { TicketQueryDto } from '../dtos/ticket.query.dto';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getOrderOption } from 'src/shared/utils/order';
 
 @Injectable()
@@ -75,7 +75,7 @@ export class TicketService {
       user,
       status,
       sort,
-      order = Order.Desc,
+      order = sortOrder.Desc,
     } = queryParams;
 
     const query: any = {};

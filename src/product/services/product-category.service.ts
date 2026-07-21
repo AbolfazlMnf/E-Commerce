@@ -7,7 +7,7 @@ import { ProductCategoryQueryDto } from '../dtos/product-category-query.dto';
 import { UpdateProductCategoryDto } from '../dtos/update-product-category.dto';
 import { deleteImages, saveImage } from 'src/shared/utils/image';
 import { getOrderOption } from 'src/shared/utils/order';
-import { Order } from 'src/shared/dtos/query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
 import { getSortOption } from 'src/shared/utils/sort';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ProductCategoryService {
       title,
       sort,
       url,
-      order = Order.Desc,
+      order = sortOrder.Desc,
     } = queryParams;
 
     const query: any = {};
