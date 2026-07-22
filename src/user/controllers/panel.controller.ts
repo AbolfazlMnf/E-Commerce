@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -30,11 +31,19 @@ export class PanelController {
     private readonly userService: UserService,
     private readonly addressService: AddressService,
   ) {}
-  @Get(`:id`)
-  getOne(@Param(`id`) id: string) {
-    return this.userService.findOne(id);
+
+  @Post('address')
+  createAddress(@Body() body: AddressDto, @User() user: string) {
+    return this.addressService.create(body, user);
   }
-  @Patch(`change-password`)
+  @Get('address')
+  findAllAddresses(
+    @Query() queryParams: AddressQueryDto,
+    @User() user: string,
+  ) {
+    return this.addressService.findAll(queryParams, user);
+  }
+  @Put(`change-password`)
   async changePassword(
     @Body(ChangePasswordPipe, new BodyIdPipe([`id`])) body: changePasswordDto,
   ) {
@@ -44,14 +53,9 @@ export class PanelController {
     });
     return user;
   }
-  @Get('address')
-  findAllAddresses(@Query() queryParams: AddressQueryDto) {
-    return this.addressService.findAll(queryParams);
-  }
-
-  @Post('address')
-  createAddress(@Body() body: AddressDto, @User() user: string) {
-    return this.addressService.create(body, user);
+  @Get(`user/:id`)
+  getOne(@Param(`id`) id: string) {
+    return this.userService.findOne(id);
   }
 
   @Get('address/:id')
@@ -59,7 +63,7 @@ export class PanelController {
     return this.addressService.findOne(id);
   }
 
-  @Patch('address/:id')
+  @Put('address/:id')
   editAddress(@Param('id') id: string, @Body() body: UpdateAddressDto) {
     return this.addressService.update(id, body);
   }

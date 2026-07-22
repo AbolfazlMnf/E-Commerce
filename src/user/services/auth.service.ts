@@ -23,8 +23,8 @@ export class AuthService {
     if (!isMatchPassword) {
       throw new BadRequestException(`the password is not correct`);
     } else {
-      await this.sendCode(body.mobile);
-      return { message: `code sent` };
+      const code = await this.sendCode(body.mobile);
+      return { message: `code sent`, code };
     }
   }
   async findUserByMobile(mobile: string) {
@@ -41,7 +41,7 @@ export class AuthService {
     user.code = hashedCode;
     console.log(code);
     await user.save();
-    return { message: `code sent` };
+    return code;
   }
   async confirm(body: ConfirmDto) {
     const user = await this.findUserByMobile(body.mobile);

@@ -3,36 +3,53 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from 'src/app.service';
 import { LogType } from '../schemas/log.schema';
+import { MongoServerError } from 'mongodb';
 
-@Catch(HttpException)
-export class LogFilter<T extends HttpException> implements ExceptionFilter {
+@Catch()
+export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(private readonly appService: AppService) {}
-  async catch(exception: T, host: ArgumentsHost) {
+  async catch(exception: unknown, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
-    // const status = exception.getStatus();
-    // if (status === 404) {
-    //   response
-    //     .status(status)
-    //     .send({ statusCode: 404, message: `Not Found !!` });
-    // } else {
-    //   response.send(exception.getResponse());
-    // }
+
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let body: any = {
+      statusCode: status,
+      message: `Internal server error`,
+    };
+
+    if (exception instanceof MongoServerError && exception.code === 11000) {
+      status = HttpStatus.CONFLICT;
+      const item = Object.keys(exception.keyPattern)[0];
+      body = {
+        statusCode: status,
+        message: `${item} is already exist `,
+      };
+    } else if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      body = exception.getResponse();
+    } else if (exception instanceof Error) {
+      body = {
+        statusCode: status,
+        message: exception.message,
+      };
+    }
 
     try {
       await this.appService.addLog({
         type: LogType.Error,
         url: request.url,
-        content: JSON.stringify(exception.getResponse()),
+        content: JSON.stringify(body),
       });
     } catch (err) {
       console.log(`LogError`, err);
     }
-    const status = exception.getStatus();
-    response.status(status).send(exception.getResponse());
+
+    response.status(status).send(body);
   }
 }

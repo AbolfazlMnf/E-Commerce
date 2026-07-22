@@ -25,10 +25,11 @@ import { RoleDto } from '../dtos/auth.dto';
 @ApiTags(`Users`)
 @ApiBearerAuth()
 @Controller('users')
-@UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
+@UseGuards(JwtGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Get()
+  @Get(`Admin/all`)
+  @UseGuards(new RoleGuard([Role.Admin]))
   findAll(@Query() queries: UserQueryDto) {
     return this.userService.getAll(queries);
   }
@@ -46,11 +47,13 @@ export class UserController {
   ) {
     return this.userService.updateUser(id, body);
   }
-  @Delete(`:id`)
+  @Delete(`:id/Admin`)
+  @UseGuards(new RoleGuard([Role.Admin]))
   delete(@Param(`id`) id: string) {
     return this.userService.deleteUser(id);
   }
-  @Put(`:id/role`)
+  @Put(`:id/role/Admin`)
+  @UseGuards(new RoleGuard([Role.Admin]))
   changeRole(@Param(`id`) id: string, @Body() body: RoleDto) {
     return this.userService.changeRole(id, body.role);
   }

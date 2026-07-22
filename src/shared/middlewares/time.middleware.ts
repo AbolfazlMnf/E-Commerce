@@ -4,9 +4,9 @@ import { time, timeEnd } from 'console';
 @Injectable()
 export class TimeMiddleware implements NestMiddleware {
   use(req: any, res: any, next: () => void) {
-    time(`Time`);
+    const start = Date.now();
     res.on(`finish`, () => {
-      timeEnd(`Time`);
+      console.log(`time ${Date.now() - start}ms `);
     });
 
     next();

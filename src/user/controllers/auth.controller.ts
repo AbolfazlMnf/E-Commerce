@@ -19,14 +19,8 @@ export class AuthController {
   ) {}
   @Post(`sign-up`)
   @UseInterceptors(PasswordInterceptor)
-  async signUp(
-    @Body(EnglishPipe, MobilePipe, new PasswordPipe(true)) body: UserDto,
-  ) {
-    const user = await this.userService.create(body);
-    if (user._id) {
-      await this.authService.sendCode(user.mobile);
-      return { message: `code sent` };
-    }
+  signUp(@Body(EnglishPipe, MobilePipe, new PasswordPipe(true)) body: UserDto) {
+    return this.userService.create(body);
   }
   @Post(`login`)
   login(@Body(MobilePipe, new PasswordPipe(false)) body: AuthDto) {

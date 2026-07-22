@@ -12,10 +12,12 @@ export class PasswordInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((response) => {
         const newResponse = JSON.parse(JSON.stringify(response));
-        if (response.password) {
+
+        if (newResponse.password) {
           delete newResponse.password;
-          return newResponse;
         }
+
+        return newResponse;
       }),
     );
   }

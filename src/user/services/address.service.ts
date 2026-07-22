@@ -17,18 +17,22 @@ export class AddressService {
     private readonly addressModel: Model<Address>,
   ) {}
 
-  async findAll(queryParams: AddressQueryDto, selectObject: any = { __v: 0 }) {
-    const { limit = 10, page = 1, user, order = sortOrder.Desc } = queryParams;
+  async findAll(
+    queryParams: AddressQueryDto,
+    user: string,
+    selectObject: any = { __v: 0 },
+  ) {
+    const { limit = 10, page = 1, order = sortOrder.Desc } = queryParams;
 
     const query: any = {};
-    if (user) query.user = user;
+    query.user = user;
 
     const orderOption = getOrderOption(order);
     const sortObject = getSortOption(orderOption, queryParams?.sort);
 
     const addresses = await this.addressModel
       .find(query)
-      .skip(page - 1)
+      .skip((page - 1) * limit)
       .limit(limit)
       .sort(sortObject)
       .select(selectObject)

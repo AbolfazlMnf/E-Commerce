@@ -5,10 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
 import { TimeMiddleware } from './shared/middlewares/time.middleware';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LogInterceptor } from './shared/interceptors/log.interceptor';
 import { Log, LogSchema } from './shared/schemas/log.schema';
-import { LogFilter } from './shared/filters/log.filter';
+import { GlobalExceptionFilter } from './shared/filters/log.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { IdPipe } from './shared/pipes/id.pipe';
@@ -23,7 +23,6 @@ import { BullModule } from '@nestjs/bull';
 import { RedisModule } from './redis/redis.module';
 import { CommentModule } from './comment/comment.module';
 import { ImageModule } from './image/image.module';
-import { MongoExceptionFilter } from './shared/filters/mongo.filter';
 
 @Module({
   imports: [
@@ -77,11 +76,7 @@ import { MongoExceptionFilter } from './shared/filters/mongo.filter';
     },
     {
       provide: APP_FILTER,
-      useClass: LogFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: MongoExceptionFilter,
+      useClass: GlobalExceptionFilter,
     },
   ],
 })

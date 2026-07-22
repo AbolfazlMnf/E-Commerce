@@ -6,7 +6,7 @@ export const User = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const request = context
       .switchToHttp()
-      .getRequest<Request & { user: IUserPayload }>();
-    return request.user._id ?? null;
+      .getRequest<Request & { user?: IUserPayload }>();
+    return request?.user?._id.toString() ?? null;
   },
 );
