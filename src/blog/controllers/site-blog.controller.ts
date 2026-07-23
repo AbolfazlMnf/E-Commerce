@@ -32,6 +32,7 @@ export class SiteBlogController {
   @Get(`:url`)
   async getOne(@Param(`url`) url: string) {
     const blog = await this.blogService.findOneWithUrl(url);
+
     const relatedBlogs = await this.blogService.findAll({
       exclude: [blog._id.toString()],
       category: blog.category._id.toString(),

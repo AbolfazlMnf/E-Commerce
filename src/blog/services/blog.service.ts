@@ -77,7 +77,10 @@ export class BlogService {
     return blog;
   }
   async findOneWithUrl(url: string) {
-    const blog = await this.blogModel.findOne({ url }).exec();
+    const blog = await this.blogModel
+      .findOne({ url })
+      .populate(`category`)
+      .exec();
     if (!blog) {
       throw new NotFoundException(`blog NotFound`);
     }
@@ -134,11 +137,9 @@ export class BlogService {
       throw new NotFoundException();
     }
     const imagesUrl = await saveImages(files, 'blog', 400, 500);
-    blog.images = imagesUrl;
+    blog.images?.push(...imagesUrl);
     await blog?.save();
-    return {
-      message: `${imagesUrl.length > 1 ? `images` : `image`} added successfully`,
-    };
+    return blog;
   }
   async deleteImage(id: string, body: DeleteFileDto) {
     const blog = await this.blogModel.findById(id);
@@ -160,6 +161,7 @@ export class BlogService {
     await blog.save();
     return {
       message: `${body.filePaths.length > 1 ? `images` : `image`} deleted successfully`,
+      blog,
     };
   }
 }

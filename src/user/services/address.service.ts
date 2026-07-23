@@ -17,15 +17,13 @@ export class AddressService {
     private readonly addressModel: Model<Address>,
   ) {}
 
-  async findAll(
-    queryParams: AddressQueryDto,
-    user: string,
-    selectObject: any = { __v: 0 },
-  ) {
-    const { limit = 10, page = 1, order = sortOrder.Desc } = queryParams;
+  async findAll(queryParams: AddressQueryDto, selectObject: any = { __v: 0 }) {
+    const { limit = 10, page = 1, order = sortOrder.Desc, user } = queryParams;
 
     const query: any = {};
-    query.user = user;
+    if (user) {
+      query.user = user;
+    }
 
     const orderOption = getOrderOption(order);
     const sortObject = getSortOption(orderOption, queryParams?.sort);

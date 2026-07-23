@@ -102,7 +102,7 @@ export class BlogCategoryService {
     const imageUrl = await saveImage(file, `blog-category`);
     category.image = imageUrl;
     await category.save();
-    return { message: `image saved successfully` };
+    return category;
   }
   async deleteImage(id: string) {
     const category = await this.findOne(id);

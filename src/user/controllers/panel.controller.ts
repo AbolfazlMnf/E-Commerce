@@ -37,11 +37,8 @@ export class PanelController {
     return this.addressService.create(body, user);
   }
   @Get('address')
-  findAllAddresses(
-    @Query() queryParams: AddressQueryDto,
-    @User() user: string,
-  ) {
-    return this.addressService.findAll(queryParams, user);
+  findAllAddresses(@Query() queryParams: AddressQueryDto) {
+    return this.addressService.findAll(queryParams);
   }
   @Put(`change-password`)
   async changePassword(

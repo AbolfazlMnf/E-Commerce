@@ -1,4 +1,8 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 
@@ -20,6 +24,7 @@ export class BlogQueryDto extends GeneralQueryDto {
 
   @IsOptional()
   @IsArray()
+  @ApiHideProperty()
   exclude?: string[];
 
   @IsOptional()

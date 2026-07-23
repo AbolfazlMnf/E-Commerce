@@ -64,7 +64,7 @@ export class BlogCategoryController {
     description: `id of a category`,
   })
   @ApiConsumes(`multipart/form-data`)
-  @UseInterceptors(FileInterceptor)
+  @UseInterceptors(FileInterceptor(`file`))
   uploadImage(
     @UploadedFile(
       new ParseFilePipe({

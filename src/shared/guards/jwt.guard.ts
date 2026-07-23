@@ -11,7 +11,6 @@ export class JwtGuard implements CanActivate {
       .switchToHttp()
       .getRequest<Request & { user: IUserPayload }>();
     const token = request.headers.authorization?.split(` `)[1];
-    console.log(`t:`, request.headers.authorization);
 
     if (!token) {
       return false;
