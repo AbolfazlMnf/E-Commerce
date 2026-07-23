@@ -6,15 +6,15 @@ import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 export class ProductCategoryQueryDto extends GeneralQueryDto {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   url?: string;
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   title?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   sort?: Sort;
 }

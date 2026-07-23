@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 
@@ -12,25 +12,26 @@ export enum ProductSort {
 export class ProductQueryDto extends GeneralQueryDto {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   title?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   url?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   category?: string;
 
   @IsOptional()
   @IsString()
+  @ApiHideProperty()
   exclude?: string[];
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   sort?: ProductSort;
 }

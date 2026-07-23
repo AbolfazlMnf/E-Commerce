@@ -13,16 +13,17 @@ export class SeoQueryDto extends GeneralQueryDto {
   @IsOptional()
   @ApiProperty({
     enum: SeoSort,
+    required: false,
   })
   sort?: SeoSort;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   seoTitle?: string;
 
   @IsString()
-  @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({ required: false })
   url!: string;
 }

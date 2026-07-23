@@ -30,7 +30,7 @@ import { Role } from 'src/user/Schema/user.schema';
 import { slugPipe } from 'src/shared/pipes/slug.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('ProductCategory')
+@ApiTags('Product-Category')
 @Controller('product-category')
 @UseGuards(JwtGuard, new RoleGuard([Role.Admin, Role.CopyRighter]))
 @ApiBearerAuth()

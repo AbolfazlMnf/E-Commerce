@@ -6,10 +6,10 @@ import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 export class InventoryQueryDto extends GeneralQueryDto {
   @IsEnum(Sort)
   @IsOptional()
-  @ApiProperty({ enum: Sort })
+  @ApiProperty({ enum: Sort, required: false })
   sort?: Sort;
 
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   product?: string;
 }

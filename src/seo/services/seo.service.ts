@@ -65,6 +65,7 @@ export class SeoService {
     if (!updatedSeo) {
       throw new NotFoundException(`seo item not found`);
     }
+    return updatedSeo;
   }
   async delete(id: string) {
     const deletedSeo = await this.seoModel.findByIdAndDelete(id).exec();

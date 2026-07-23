@@ -125,9 +125,13 @@ export class ProductService {
   async uploadImages(id: string, images: Array<Express.Multer.File>) {
     const product = await this.findOne(id);
     const imagesPath = await saveImages(images, `products/images`);
-    product.images = imagesPath;
+    product.images.push(...imagesPath);
     await product.save();
-    return { message: `images uploaded successfully` };
+    return {
+      message: `images uploaded successfully,
+      `,
+      product,
+    };
   }
   async uploadThumbnail(id: string, thumbnail: Express.Multer.File) {
     const product = await this.findOne(id);
