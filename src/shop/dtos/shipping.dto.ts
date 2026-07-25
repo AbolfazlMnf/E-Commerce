@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -9,15 +10,18 @@ import {
 export class ShippingDto {
   @IsString()
   @IsNotEmpty()
+  @ApiProperty()
   title!: string;
 
   @IsNumber()
   @IsNotEmpty()
   @IsPositive()
+  @ApiProperty()
   price!: number;
 
   @IsNumber()
   @IsOptional()
   @IsPositive()
+  @ApiProperty()
   freeShippingThreshold?: number;
 }

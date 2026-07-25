@@ -121,7 +121,12 @@ export class OrderService {
       shippingPrice: shippingPrice,
       finalPrice: (await cart.prices).totalPriceWithDiscount + shippingPrice,
     });
-    const bankResponse = await this.createPaymentRequest(order?.finalPrice);
+
+    const bankResponse = await this.createPaymentRequest(
+      order?.finalPrice,
+      body.callback_url,
+    );
+
     if (bankResponse?.code === 100) {
       order.refId = bankResponse?.authority;
       for (const item of cart.cartItems) {
@@ -161,7 +166,7 @@ export class OrderService {
       );
       await order.save();
       return {
-        url: `${process.env.CALL_BACK_URL}?authority=${bankResponse?.authority} `,
+        url: `${process.env.CALL_BACK_URL}${bankResponse?.authority}`,
       };
     } else {
       throw new BadRequestException(
@@ -205,15 +210,22 @@ export class OrderService {
     }
   }
 
-  async createPaymentRequest(finalPrice: number) {
+  async createPaymentRequest(finalPrice: number, url?: string) {
     const bankData = {
       amount: finalPrice,
       description: `خرید از مجموعه e-commerce`,
       merchant_id: process.env.MERCHANT_ID,
-      callback_url: process.env.SITE_URL,
+      callback_url: url ?? `${process.env.SITE_URL}/verify`,
     };
-    const response = await axios.post(process.env.BANK_URL ?? ``, bankData);
-    return response?.data?.data;
+    try {
+      const response = await axios.post(process.env.BANK_URL!, bankData);
+
+      return response.data.data;
+    } catch (error) {
+      console.log(error.response?.data);
+      console.log(error.response?.status);
+      throw error;
+    }
   }
   async findOrderItems(id: string) {
     const items = await this.orderItemModel

@@ -33,7 +33,7 @@ export class PanelTicketController {
     return this.ticketService.findAll(queries);
   }
 
-  @Get()
+  @Get(`:id`)
   userFindTicket(@Param(`id`) id: string) {
     return this.ticketService.findOneTicket(id);
   }

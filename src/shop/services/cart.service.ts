@@ -7,6 +7,10 @@ import { CartItem } from '../schemas/cart-item.schema';
 import { NewCartDto } from '../dtos/newcart.dto';
 import { NewCartItemDto } from '../dtos/newCartItem.dto';
 import { EditCartItemDto } from '../dtos/edit-cart-item.dto';
+import { CartQueryDto } from '../dtos/cart-query.dto';
+import { sortOrder } from 'src/shared/dtos/query.dto';
+import { getOrderOption } from 'src/shared/utils/order';
+import { getSortOption } from 'src/shared/utils/sort';
 
 @Injectable()
 export class CartService {
@@ -14,7 +18,28 @@ export class CartService {
     @InjectModel(Cart.name) private readonly cartModel: Model<Cart>,
     @InjectModel(CartItem.name) private readonly cartItemModel: Model<CartItem>,
   ) {}
-
+  async findAllCarts(query: CartQueryDto) {
+    const { page = 1, limit = 5, order = sortOrder.Desc, sort } = query;
+    const orderOption = getOrderOption(order);
+    const sortObj = getSortOption(orderOption, sort);
+    const [carts, count] = await Promise.all([
+      this.cartModel
+        .find()
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort(sortObj)
+        .exec(),
+      this.cartModel.countDocuments().exec(),
+    ]);
+    return { carts, count, page };
+  }
+  async findUserCart(userId: string) {
+    const cart = await this.cartModel.findOne({ user: userId }).exec();
+    if (!cart) {
+      throw new NotFoundException();
+    }
+    return cart;
+  }
   async createNewCart(body: NewCartDto, user: string) {
     const newCart = new this.cartModel({ user });
     await newCart.save();

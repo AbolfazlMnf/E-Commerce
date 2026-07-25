@@ -21,7 +21,7 @@ import { Role } from 'src/user/Schema/user.schema';
 @ApiTags('Shipping')
 @ApiBearerAuth()
 @UseGuards(JwtGuard, new RoleGuard([Role.Admin]))
-@Controller('shipping')
+@Controller('Admin/shipping')
 export class ShippingController {
   constructor(private readonly shippingService: ShippingService) {}
 

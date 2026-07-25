@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateOrderDto {
   @IsString()
@@ -14,4 +14,9 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @ApiProperty()
   addressId!: string;
+
+  @IsUrl()
+  @IsOptional()
+  @ApiProperty()
+  callback_url?: string;
 }

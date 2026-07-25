@@ -6,6 +6,6 @@ import { GeneralQueryDto } from 'src/shared/dtos/query.dto';
 export class ImageQueryDto extends GeneralQueryDto {
   @IsOptional()
   @IsEnum(Sort)
-  @ApiProperty({ enum: Sort })
+  @ApiProperty({ enum: Sort, required: false })
   sort?: Sort;
 }

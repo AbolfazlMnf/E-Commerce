@@ -7,26 +7,26 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CommentQueryDto extends GeneralQueryDto {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   content?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   user?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   product?: string;
 
   @IsOptional()
   @IsEnum(CommentStatus)
-  @ApiProperty({ enum: CommentStatus })
+  @ApiProperty({ enum: CommentStatus, required: false })
   status?: CommentStatus;
 
   @IsOptional()
   @IsEnum(Sort)
-  @ApiProperty({ enum: Sort })
+  @ApiProperty({ enum: Sort, required: false })
   sort?: Sort;
 }

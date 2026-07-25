@@ -7,21 +7,21 @@ import { Sort } from 'src/blog/dtos/blog.query.dto';
 export class TicketQueryDto extends GeneralQueryDto {
   @IsEnum(TicketStatus)
   @IsOptional()
-  @ApiProperty({ enum: TicketStatus })
+  @ApiProperty({ enum: TicketStatus, required: false })
   status?: TicketStatus;
 
   @IsEnum(Sort)
   @IsOptional()
-  @ApiProperty({ enum: Sort })
+  @ApiProperty({ enum: Sort, required: false })
   sort?: Sort;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   user!: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   title?: string;
 }
