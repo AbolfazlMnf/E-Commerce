@@ -58,6 +58,7 @@ import { ImageModule } from './image/image.module';
         host: process.env.REDIS_HOST,
         port: +(process?.env?.REDIS_PORT ?? `3000`),
         password: process.env.REDIS_PASSWORD,
+        tls: {},
       },
     }),
     SeoModule,
