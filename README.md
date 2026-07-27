@@ -151,7 +151,7 @@ See `.env.example` for the full list with placeholder values.
 
 Full interactive API documentation is available via Swagger:
 
-**[→ e-commerce-2r9t.onrender.com/api](https://e-commerce-2r9t.onrender.com/api)**
+**[→ e-commerce-2r9t.onrender.com/documentation#/](https://e-commerce-2r9t.onrender.com/documentation#/)**
 
 > ⚠️ Hosted on Render's free tier — the first request after a period of inactivity may take 30–60s to wake the service.
 
