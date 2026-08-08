@@ -17,7 +17,7 @@ async function bootstrap() {
   app.use(timeout(`8s`));
 
   app.useGlobalPipes(new IdPipe());
-  // app.useGlobalGuards(new ApikeyGuard());
+  app.useGlobalGuards(new ApikeyGuard());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
